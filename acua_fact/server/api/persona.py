@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from acua_fact.server.db.session import get_session
 from acua_fact.server.models.persona import Persona
 from acua_fact.server.schemas.persona import PersonaCreate, PersonaRead, PersonaUpdate
+from acua_fact.server.schemas.response import OK
 
 router = APIRouter(
     prefix="/personas",
@@ -15,19 +16,15 @@ router = APIRouter(
 
 
 @router.post("/")
-async def check_problems(
+async def create_persona(
     *,
     session: AsyncSession = Depends(get_session),
     persona: Annotated[PersonaCreate, Body(title="Persona a crear")],
-) -> bool:
+) -> PersonaRead:
     db_persona = Persona.model_validate(persona)
     session.add(db_persona)
-    try:
-        await session.commit()
-        await session.refresh(db_persona)
-        return True
-    except Exception:
-        return False
+    await session.commit()
+    return db_persona
 
 
 @router.get("/{id}")
@@ -57,4 +54,18 @@ async def update_persona(
         setattr(db_persona, key, value)
     await session.commit()
     await session.refresh(db_persona)
-    return True
+    return db_persona
+
+
+@router.delete("/{id}")
+async def delete_persona(
+    *,
+    id: Annotated[int, Path(title="ID de la persona a eliminar")],
+    session: AsyncSession = Depends(get_session),
+) -> OK:
+    db_persona = await session.get(Persona, id)
+    if not db_persona:
+        return HTTPException(status_code=404, detail="Persona no encontrada")
+    await session.delete(db_persona)
+    await session.commit()
+    return OK(ok=True)
