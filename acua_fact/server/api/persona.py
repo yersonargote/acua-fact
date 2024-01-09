@@ -57,4 +57,4 @@ async def update_persona(
         setattr(db_persona, key, value)
     await session.commit()
     await session.refresh(db_persona)
-    return db_persona
+    return True
