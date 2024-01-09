@@ -1,4 +1,5 @@
 import gradio as gr
+import pandas as pd
 import requests
 
 
@@ -19,7 +20,8 @@ def create_persona(id: int, nombre: str, direccion: str, telefono: str) -> str:
 def get_persona(id: int) -> dict:
     url = f"http://localhost:8000/personas/{id}"
     response = requests.get(url)
-    yield response.json()
+    df = pd.DataFrame(response.json(), index=[0])
+    return df
 
 
 def build_ui_blocks() -> gr.Blocks:
@@ -28,8 +30,9 @@ def build_ui_blocks() -> gr.Blocks:
         with gr.Tab("Gestión Personas"):
             with gr.Row():
                 with gr.Column():
+                    gr.Label(value="Buscar Persona")
                     id_s = gr.Number(label="Identificación")
-                    result_s = gr.JSON(label="Persona")
+                    result_s = gr.DataFrame(label="Persona")
                     search = gr.Button(value="Buscar")
                     search.click(
                         get_persona,
@@ -37,6 +40,7 @@ def build_ui_blocks() -> gr.Blocks:
                         outputs=[result_s],
                     )
                 with gr.Column():
+                    gr.Label(value="Crear Persona")
                     id_c = gr.Textbox(label="Identificación")
                     nombre_c = gr.Textbox(label="Nombre Completo")
                     direccion_c = gr.Textbox(label="Dirección")
