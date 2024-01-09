@@ -14,7 +14,7 @@ def create_persona(id: int, nombre: str, direccion: str, telefono: str) -> str:
     response = requests.post(url, json=payload)
     if response.text == "true":
         return "Persona creada"
-    return "Error al crear persona"
+    return "No se pudo crear la persona"
 
 
 def get_persona(id: int) -> dict:
@@ -22,6 +22,19 @@ def get_persona(id: int) -> dict:
     response = requests.get(url)
     df = pd.DataFrame(response.json(), index=[0])
     return df
+
+
+def update_persona(id: int, nombre: str, direccion: str, telefono: str) -> str:
+    url = f"http://localhost:8000/personas/{id}"
+    payload = {
+        "nombre": nombre,
+        "direccion": direccion,
+        "telefono": telefono,
+    }
+    response = requests.patch(url, json=payload)
+    if response.text == "true":
+        return "Persona actualizada"
+    return "No se pudo actualizar la persona"
 
 
 def build_ui_blocks() -> gr.Blocks:
@@ -49,6 +62,12 @@ def build_ui_blocks() -> gr.Blocks:
                     crear = gr.Button(value="Crear")
                     crear.click(
                         create_persona,
+                        inputs=[id_c, nombre_c, direccion_c, telefono_c],
+                        outputs=[result_c],
+                    )
+                    actualizar = gr.Button(value="Actualizar")
+                    actualizar.click(
+                        update_persona,
                         inputs=[id_c, nombre_c, direccion_c, telefono_c],
                         outputs=[result_c],
                     )

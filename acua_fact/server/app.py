@@ -9,12 +9,7 @@ from acua_fact.server.api import personas_router
 from acua_fact.server.db.session import create_db_and_tables
 
 origins = [
-    "http://localhost:7860",
-    "localhost:7860",
-    "http://localhost:8080",
-    "localhost:8080",
     "http://localhost:8000",
-    "localhost:8000",
 ]
 
 
