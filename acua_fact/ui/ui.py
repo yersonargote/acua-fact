@@ -1,5 +1,6 @@
+import json
+
 import gradio as gr
-import pandas as pd
 import requests
 
 
@@ -20,8 +21,9 @@ def create_persona(id: int, nombre: str, direccion: str, telefono: str) -> str:
 def get_persona(id: int) -> dict:
     url = f"http://localhost:8000/personas/{id}"
     response = requests.get(url)
-    df = pd.DataFrame(response.json(), index=[0])
-    return df
+    persona = json.loads(response.text)
+    nombre, direccion, telefono, id = persona.values()
+    return id, nombre, direccion, telefono
 
 
 def update_persona(id: int, nombre: str, direccion: str, telefono: str) -> str:
@@ -43,15 +45,12 @@ def build_ui_blocks() -> gr.Blocks:
         with gr.Tab("Gestión Personas"):
             with gr.Row():
                 with gr.Column():
-                    gr.Label(value="Buscar Persona")
-                    id_s = gr.Number(label="Identificación")
-                    result_s = gr.DataFrame(label="Persona")
-                    search = gr.Button(value="Buscar")
-                    search.click(
-                        get_persona,
-                        inputs=[id_s],
-                        outputs=[result_s],
-                    )
+                    with gr.Row():
+                        gr.Label(value="Buscar Persona")
+                        id_s = gr.Number(label="Identificación")
+                        search = gr.Button(value="Buscar")
+
+            with gr.Row():
                 with gr.Column():
                     gr.Label(value="Crear Persona")
                     id_c = gr.Textbox(label="Identificación")
@@ -60,16 +59,22 @@ def build_ui_blocks() -> gr.Blocks:
                     telefono_c = gr.Textbox(label="Teléfono")
                     result_c = gr.Label(label="Resultado")
                     crear = gr.Button(value="Crear")
-                    crear.click(
-                        create_persona,
-                        inputs=[id_c, nombre_c, direccion_c, telefono_c],
-                        outputs=[result_c],
-                    )
                     actualizar = gr.Button(value="Actualizar")
-                    actualizar.click(
-                        update_persona,
-                        inputs=[id_c, nombre_c, direccion_c, telefono_c],
-                        outputs=[result_c],
-                    )
+
+        crear.click(
+            create_persona,
+            inputs=[id_c, nombre_c, direccion_c, telefono_c],
+            outputs=[result_c],
+        )
+        actualizar.click(
+            update_persona,
+            inputs=[id_c, nombre_c, direccion_c, telefono_c],
+            outputs=[result_c],
+        )
+        search.click(
+            get_persona,
+            inputs=[id_s],
+            outputs=[id_c, nombre_c, direccion_c, telefono_c],
+        )
 
     return blocks
