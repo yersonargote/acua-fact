@@ -1,5 +1,11 @@
 ## ACUA FACT
 
+## TODO
+
+- [ ] Agregar la app a **docker-compose**.
+- [ ] Cambiar la forma de busqueda de personas por un **Dropdown**.
+
+
 ## Descripción
 
 ACUA FACT es una aplicación web que permite a los usuarios realizar facturas de manera sencilla y rápida, además de poder llevar un control de las mismas.
