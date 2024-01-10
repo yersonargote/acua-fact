@@ -1,19 +1,20 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
-
-class ConceptoBase(BaseModel):
-    nombre: str
-    descripcion: str
+from acua_fact.server.models.concepto import ConceptoBase
 
 
 class ConceptoCreate(ConceptoBase):
-    pass
+    id: UUID
 
 
 class ConceptoRead(ConceptoBase):
     id: UUID
 
-    class Config:
-        orm_mode = True
+
+class ConceptoUpdate(SQLModel):
+    id: UUID | None = None
+    nombre: str | None = None
+    valor: float | None = None
+    subsidio: float | None = None

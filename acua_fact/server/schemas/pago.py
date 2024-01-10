@@ -1,20 +1,20 @@
 from datetime import date
 from uuid import UUID
 
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
-
-class PagoBase(BaseModel):
-    fecha: date
-    total: float
+from acua_fact.server.models.pago import PagoBase
 
 
 class PagoCreate(PagoBase):
-    pass
+    id: UUID
 
 
 class PagoRead(PagoBase):
     id: UUID
 
-    class Config:
-        orm_mode = True
+
+class PagoUpdate(SQLModel):
+    id: UUID | None = None
+    fecha: date | None = None
+    total: float | None = None

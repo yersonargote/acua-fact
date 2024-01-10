@@ -7,8 +7,8 @@ class PersonaCreate(PersonaBase):
     id: int
 
 
-class PersonaRead(PersonaBase):
-    id: int
+class PersonaRead(PersonaCreate):
+    pass
 
 
 class PersonaUpdate(SQLModel):

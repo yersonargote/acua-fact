@@ -11,11 +11,11 @@ class FacturaBase(SQLModel):
     fecha_fin: date
     fecha_limite_pago: date
     total: float
-    persona_id: int = Field(foreign_key="persona.id")
 
 
 class Factura(FacturaBase, table=True):
     id: UUID = Field(primary_key=True)
+    persona_id: int = Field(foreign_key="persona.id")
     persona: "Persona" = Relationship(back_populates="facturas")
     pagos: list["Pago"] = Relationship(back_populates="factura")
     conceptos: list["Concepto"] = Relationship(

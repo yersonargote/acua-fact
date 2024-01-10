@@ -1,34 +1,23 @@
+from datetime import date
 from uuid import UUID
 
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
-from acua_fact.server.schemas.persona import PersonaRead
-
-
-class FacturaBase(BaseModel):
-    fecha: str
-    total: float
-    persona_id: str
+from acua_fact.server.models.factura import FacturaBase
 
 
 class FacturaCreate(FacturaBase):
+    id: UUID
+    persona_id: int
+
+
+class FacturaRead(FacturaCreate):
     pass
 
 
-class FacturaUpdate(FacturaBase):
-    id: UUID
-
-
-class FacturaRead(FacturaBase):
-    id: UUID
-
-    class Config:
-        orm_mode = True
-
-
-class FacturaReadWithPersona(FacturaBase):
-    id: UUID
-    persona: PersonaRead
-
-    class Config:
-        orm_mode = True
+class FacturaUpdate(SQLModel):
+    id: UUID | None = None
+    fecha_inicio: date | None = None
+    fecha_fin: date | None = None
+    fecha_limite_pago: date | None = None
+    total: float | None = None
