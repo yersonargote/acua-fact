@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, Path
+from fastapi import APIRouter, Body, Depends, Path, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
@@ -15,7 +15,10 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_persona(
     *,
     session: AsyncSession = Depends(get_session),
@@ -34,8 +37,8 @@ async def read_persona(
     session: AsyncSession = Depends(get_session),
 ) -> PersonaRead:
     db_persona = await session.get(Persona, id)
-    if not db_persona:
-        return HTTPException(status_code=404, detail="Persona no encontrada")
+    if db_persona is None:
+        raise HTTPException(status_code=404, detail="Persona no encontrada")
     return db_persona
 
 
@@ -47,8 +50,8 @@ async def update_persona(
     session: AsyncSession = Depends(get_session),
 ) -> PersonaRead:
     db_persona = await session.get(Persona, id)
-    if not db_persona:
-        return HTTPException(status_code=404, detail="Persona no encontrada")
+    if db_persona is None:
+        raise HTTPException(status_code=404, detail="Persona no encontrada")
     persona_data = persona.model_dump(exclude_unset=True)
     for key, value in persona_data.items():
         setattr(db_persona, key, value)
@@ -64,8 +67,8 @@ async def delete_persona(
     session: AsyncSession = Depends(get_session),
 ) -> OK:
     db_persona = await session.get(Persona, id)
-    if not db_persona:
-        return HTTPException(status_code=404, detail="Persona no encontrada")
+    if db_persona is None:
+        raise HTTPException(status_code=404, detail="Persona no encontrada")
     await session.delete(db_persona)
     await session.commit()
     return OK(ok=True)

@@ -52,8 +52,7 @@ def persona_tab():
         search.click(
             get_persona,
             inputs=[id_s],
-            outputs=[id_c, nombre_c, direccion_c, telefono_c, estrato_c],
-            # outputs=[result_c],
+            outputs=[result_c, id_c, nombre_c, direccion_c, telefono_c, estrato_c],
         )
         delete.click(
             delete_persona,

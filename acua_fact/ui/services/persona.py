@@ -23,7 +23,7 @@ def create_persona(
         estrato=estrato,
     )
     response = requests.post(url, json=persona.model_dump())
-    if response.status_code == 200:
+    if response.status_code == 201:
         return "Persona creada"
     return "No se pudo crear la persona"
 
@@ -31,17 +31,18 @@ def create_persona(
 def get_persona(id: int) -> tuple:
     url = f"{URL}/{id}"
     response = requests.get(url)
-    persona = response.json()
     if response.status_code == 200:
+        persona = response.json()
         persona = PersonaRead.model_validate(persona)
         return (
+            "Persona encontrada",
             persona.id,
             persona.nombre,
             persona.direccion,
             persona.telefono,
             persona.estrato,
         )
-    return 0, "", "", "", 0
+    return "Persona no encontrada", 0, "", "", "", 0
 
 
 def update_persona(
