@@ -36,6 +36,15 @@ async def all_personas(
     *,
     session: AsyncSession = Depends(get_session),
 ) -> list[PersonaRead]:
+    """
+    Retrieve all personas from the database.
+
+    Parameters:
+    - session: The database session to use (default: get_session())
+
+    Returns:
+    - A list of PersonaRead objects representing the personas retrieved from the database.
+    """
     result = await session.execute(select(Persona))
     db_personas = result.scalars().all()
     return db_personas
