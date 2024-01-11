@@ -9,6 +9,12 @@ format:
 	poetry run ruff check acua_fact tests --fix
 
 
+dup:
+	docker-compose up -d
+
+down:
+	docker-compose down
+
 check:
 	make format
 
