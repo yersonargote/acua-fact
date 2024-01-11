@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import gradio as gr
 
 from acua_fact.server.schemas.concepto import ConceptoRead
@@ -36,6 +38,49 @@ def get_consumo(concepto, conceptos):
     return total
 
 
+def generar_factura(
+    id_l,
+    nombre_l,
+    direccion_l,
+    telefono_l,
+    estrato_l,
+    periodo_inicio,
+    periodo_fin,
+    limite_pago,
+    total,
+    conceptos,
+    conceptos_drop,
+):
+    data_f = [
+        [
+            id_l,
+            nombre_l,
+            direccion_l,
+            telefono_l,
+            estrato_l,
+            periodo_inicio,
+            periodo_fin,
+            limite_pago,
+            total,
+        ]
+    ]
+    data_c = []
+
+    for nombre in conceptos_drop:
+        for c in conceptos:
+            if c.nombre == nombre:
+                data_c.append([c.nombre, c.valor])
+    return gr.update(value=data_f), gr.update(value=data_c)
+
+
+def validar_fecha(fecha):
+    try:
+        datetime.strptime(fecha, "%d/%m/%Y")
+        return gr.update(value="Formato de fecha válido")
+    except ValueError:
+        return gr.update(value="Formato de fecha inválido")
+
+
 def factura_tab() -> gr.Tab:
     personas = gr.State([])
     p_nombres = gr.State([])
@@ -49,7 +94,6 @@ def factura_tab() -> gr.Tab:
                     show_label=False,
                     label="",
                     choices=[],
-                    # interactive=True,
                 )
                 id_l = gr.Label(label="Identificación", value="", scale=0)
                 nombre_l = gr.Label(label="Nombre", value="")
@@ -65,26 +109,83 @@ def factura_tab() -> gr.Tab:
                             placeholder="10/01/2021",
                             label="Fecha Inicio",
                         )
+
                         periodo_fin = gr.Textbox(
                             placeholder="10/02/2021",
                             label="Fecha Fin",
                         )
-                        limite_pago = gr.Label(
-                            value="10/03/2021", label="Fecha Límite Pago"
+                        limite_pago = gr.Textbox(
+                            placeholder="10/03/2021",
+                            label="Fecha Límite Pago",
                         )
+                        validar_l = gr.Label(
+                            value="",
+                            label="",
+                            show_label=False,
+                        )
+
+                    periodo_inicio.input(
+                        fn=validar_fecha,
+                        inputs=[periodo_inicio],
+                        outputs=[validar_l],
+                    )
+                    periodo_fin.input(
+                        fn=validar_fecha,
+                        inputs=[periodo_fin],
+                        outputs=[validar_l],
+                    )
+                    limite_pago.input(
+                        fn=validar_fecha,
+                        inputs=[limite_pago],
+                        outputs=[validar_l],
+                    )
+
                 with gr.Row():
                     with gr.Column():
                         conceptos_drop = gr.Dropdown(
                             label="Consumo",
                             choices=[],
                             multiselect=True,
-                            # interactive=True,
                         )
-                        concepto_l = gr.Label(
+                        total = gr.Label(
                             value="",
                             label="Total",
                         )
-                        gr.Button(value="Calcular")
+        with gr.Row():
+            generar = gr.Button(value="Generar Factura", variant="primary")
+            gr.ClearButton(value="Limpiar", components=[personas_drop, conceptos_drop])
+
+        with gr.Row():
+            with gr.Column():
+                gr.Markdown(
+                    value="## Factura",
+                    show_label=False,
+                )
+                factura = gr.DataFrame(
+                    headers=[
+                        "Identificación",
+                        "Nombre",
+                        "Dirección",
+                        "Teléfono",
+                        "Estrato",
+                        "Fecha Inicio",
+                        "Fecha Fin",
+                        "Fecha Límite Pago",
+                        "Total",
+                    ]
+                )
+        with gr.Row():
+            with gr.Column():
+                gr.Markdown(
+                    value="## Conceptos Factura",
+                    show_label=False,
+                )
+                factura_consumos = gr.DataFrame(
+                    headers=[
+                        "Concepto",
+                        "Valor",
+                    ]
+                )
 
         personas_drop.focus(
             fn=get_personas,
@@ -107,9 +208,25 @@ def factura_tab() -> gr.Tab:
         conceptos_drop.change(
             fn=get_consumo,
             inputs=[conceptos_drop, conceptos],
-            outputs=[concepto_l],
+            outputs=[total],
         )
 
-        gr.ClearButton([personas_drop, conceptos_drop])
+        generar.click(
+            generar_factura,
+            inputs=[
+                id_l,
+                nombre_l,
+                direccion_l,
+                telefono_l,
+                estrato_l,
+                periodo_inicio,
+                periodo_fin,
+                limite_pago,
+                total,
+                conceptos,
+                conceptos_drop,
+            ],
+            outputs=[factura, factura_consumos],
+        )
 
     return tab

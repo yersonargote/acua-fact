@@ -39,14 +39,15 @@ def persona_tab():
                 crear = gr.Button(value="Crear")
                 actualizar = gr.Button(value="Actualizar")
                 gr.ClearButton(
-                    [
+                    value="Limpiar",
+                    components=[
                         id_c,
                         nombre_c,
                         direccion_c,
                         telefono_c,
                         estrato_c,
                         result_c,
-                    ]
+                    ],
                 )
 
         crear.click(
