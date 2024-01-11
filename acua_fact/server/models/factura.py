@@ -1,5 +1,4 @@
 from datetime import date
-from uuid import UUID
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -14,7 +13,7 @@ class FacturaBase(SQLModel):
 
 
 class Factura(FacturaBase, table=True):
-    id: UUID = Field(primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     persona_id: int = Field(foreign_key="persona.id")
     persona: "Persona" = Relationship(back_populates="facturas")
     pagos: list["Pago"] = Relationship(back_populates="factura")
