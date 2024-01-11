@@ -6,7 +6,7 @@ from acua_fact.server.models.concepto_factura import ConceptoFactura
 
 
 class ConceptoBase(SQLModel):
-    nombre: str
+    nombre: str = Field(unique=True, index=True)
     valor: float
     subsidio: float
 
