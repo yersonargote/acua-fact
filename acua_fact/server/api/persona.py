@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Path, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio.session import AsyncSession
+from sqlmodel import select
 
 from acua_fact.server.db.session import get_session
 from acua_fact.server.models.persona import Persona
@@ -28,6 +29,16 @@ async def create_persona(
     session.add(db_persona)
     await session.commit()
     return db_persona
+
+
+@router.get("/")
+async def all_personas(
+    *,
+    session: AsyncSession = Depends(get_session),
+) -> list[PersonaRead]:
+    result = await session.execute(select(Persona))
+    db_personas = result.scalars().all()
+    return db_personas
 
 
 @router.get("/{id}")

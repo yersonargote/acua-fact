@@ -28,6 +28,16 @@ def create_persona(
     return "No se pudo crear la persona"
 
 
+def get_all_personas() -> list[PersonaRead]:
+    url = f"{URL}/"
+    response = requests.get(url)
+    if response.status_code == 200:
+        personas = response.json()
+        personas = [PersonaRead.model_validate(persona) for persona in personas]
+        return personas
+    return []
+
+
 def get_persona(id: int) -> tuple:
     url = f"{URL}/{id}"
     response = requests.get(url)

@@ -38,6 +38,16 @@ def persona_tab():
                 result_c = gr.Label(label="Resultado")
                 crear = gr.Button(value="Crear")
                 actualizar = gr.Button(value="Actualizar")
+                gr.ClearButton(
+                    [
+                        id_c,
+                        nombre_c,
+                        direccion_c,
+                        telefono_c,
+                        estrato_c,
+                        result_c,
+                    ]
+                )
 
         crear.click(
             create_persona,
