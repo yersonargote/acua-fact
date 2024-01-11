@@ -14,9 +14,9 @@ def get_personas(personas, nombres):
 
 
 def get_persona(persona, personas):
-    for i in personas:
-        if i.nombre == persona:
-            return i.id, i.nombre, i.direccion, i.telefono, i.estrato
+    for p in personas:
+        if p.nombre == persona:
+            return p.id, p.nombre, p.direccion, p.telefono, p.estrato
     return "", "", "", "", ""
 
 
@@ -28,9 +28,12 @@ def get_conceptos(conceptos, c_nombres):
 
 
 def get_consumo(concepto, conceptos):
-    if concepto:
-        return f"{concepto}"
-    return ""
+    total: float = 0
+    for nombre in concepto:
+        for c in conceptos:
+            if c.nombre == nombre:
+                total += c.valor
+    return total
 
 
 def factura_tab() -> gr.Tab:
@@ -46,7 +49,7 @@ def factura_tab() -> gr.Tab:
                     show_label=False,
                     label="",
                     choices=[],
-                    interactive=True,
+                    # interactive=True,
                 )
                 id_l = gr.Label(label="Identificación", value="", scale=0)
                 nombre_l = gr.Label(label="Nombre", value="")
@@ -75,7 +78,7 @@ def factura_tab() -> gr.Tab:
                             label="Consumo",
                             choices=[],
                             multiselect=True,
-                            interactive=True,
+                            # interactive=True,
                         )
                         concepto_l = gr.Label(
                             value="",
