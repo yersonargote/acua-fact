@@ -1,10 +1,12 @@
 import gradio as gr
 
+from acua_fact.server.schemas.concepto import ConceptoRead
 from acua_fact.server.schemas.persona import PersonaRead
+from acua_fact.ui.services.concepto import get_all_conceptos
 from acua_fact.ui.services.persona import get_all_personas
 
 
-def filter_personas(personas, nombres):
+def get_personas(personas, nombres):
     if not personas and not nombres:
         personas: list[PersonaRead] = get_all_personas()
         nombres: list[str] = [persona.nombre for persona in personas]
@@ -18,9 +20,24 @@ def get_persona(persona, personas):
     return "", "", "", "", ""
 
 
+def get_conceptos(conceptos, c_nombres):
+    if not conceptos and not c_nombres:
+        conceptos: list[ConceptoRead] = get_all_conceptos()
+        c_nombres: list[str] = [concepto.nombre for concepto in conceptos]
+    return gr.update(choices=c_nombres), conceptos, c_nombres
+
+
+def get_consumo(concepto, conceptos):
+    if concepto:
+        return f"{concepto}"
+    return ""
+
+
 def factura_tab() -> gr.Tab:
     personas = gr.State([])
-    nombres = gr.State([])
+    p_nombres = gr.State([])
+    conceptos = gr.State([])
+    c_nombres = gr.State([])
     with gr.Tab("Gestión Facturas") as tab:
         with gr.Row():
             with gr.Column():
@@ -54,20 +71,22 @@ def factura_tab() -> gr.Tab:
                         )
                 with gr.Row():
                     with gr.Column():
-                        consumo = gr.Dropdown(
-                            choices=["0", "1", "2", "3", "4", "5", "6", "7", "8"],
+                        conceptos_drop = gr.Dropdown(
+                            label="Consumo",
+                            choices=[],
                             multiselect=True,
+                            interactive=True,
                         )
-                        consumo_excedente = gr.Label(
-                            value="0",
-                            label="Consumo Excedente",
+                        concepto_l = gr.Label(
+                            value="",
+                            label="Total",
                         )
                         gr.Button(value="Calcular")
 
         personas_drop.focus(
-            fn=filter_personas,
+            fn=get_personas,
             inputs=[personas],
-            outputs=[personas_drop, personas, nombres],
+            outputs=[personas_drop, personas, p_nombres],
         )
 
         personas_drop.change(
@@ -76,6 +95,18 @@ def factura_tab() -> gr.Tab:
             outputs=[id_l, nombre_l, direccion_l, telefono_l, estrato_l],
         )
 
-        gr.ClearButton(personas_drop)
+        conceptos_drop.focus(
+            fn=get_conceptos,
+            inputs=[conceptos],
+            outputs=[conceptos_drop, conceptos, c_nombres],
+        )
+
+        conceptos_drop.change(
+            fn=get_consumo,
+            inputs=[conceptos_drop, conceptos],
+            outputs=[concepto_l],
+        )
+
+        gr.ClearButton([personas_drop, conceptos_drop])
 
     return tab

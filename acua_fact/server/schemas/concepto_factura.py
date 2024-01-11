@@ -1,14 +1,12 @@
-from uuid import UUID
-
 from pydantic import BaseModel
 
 from acua_fact.server.models.concepto_factura import ConceptoFacturaBase
 
 
 class ConceptoFacturaCreate(ConceptoFacturaBase):
-    id: UUID
-    concepto_id: UUID
-    factura_id: UUID
+    id: int
+    concepto_id: int
+    factura_id: int
 
 
 class ConceptoFacturaRead(ConceptoFacturaCreate):
@@ -16,6 +14,6 @@ class ConceptoFacturaRead(ConceptoFacturaCreate):
 
 
 class ConceptoFacturaUpdate(BaseModel):
-    id: UUID | None = None
-    factura_id: UUID | None = None
-    concepto_id: UUID | None = None
+    id: int | None = None
+    factura_id: int | None = None
+    concepto_id: int | None = None
