@@ -11,7 +11,7 @@ CREATE TABLE concepto (
         nombre VARCHAR NOT NULL,
         valor FLOAT NOT NULL,
         subsidio FLOAT NOT NULL,
-        id UUID NOT NULL,
+        id SERIAL NOT NULL,
         PRIMARY KEY (id)
 );
 
@@ -20,16 +20,16 @@ CREATE TABLE factura (
         fecha_fin DATE NOT NULL,
         fecha_limite_pago DATE NOT NULL,
         total FLOAT NOT NULL,
-        id UUID NOT NULL,
+        id SERIAL NOT NULL,
         persona_id INTEGER NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY(persona_id) REFERENCES persona (id)
 );
 
 CREATE TABLE conceptofactura (
-        id UUID NOT NULL,
-        factura_id UUID NOT NULL,
-        concepto_id UUID NOT NULL,
+        id SERIAL NOT NULL,
+        factura_id SERIAL NOT NULL,
+        concepto_id SERIAL NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY(factura_id) REFERENCES factura (id),
         FOREIGN KEY(concepto_id) REFERENCES concepto (id)
@@ -38,8 +38,8 @@ CREATE TABLE conceptofactura (
 CREATE TABLE pago (
         fecha DATE NOT NULL,
         total FLOAT NOT NULL,
-        factura_id UUID NOT NULL,
-        id UUID NOT NULL,
+        factura_id SERIAL NOT NULL,
+        id SERIAL NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY(factura_id) REFERENCES factura (id)
 );
@@ -53,4 +53,6 @@ INSERT INTO persona (nombre, direccion, telefono, estrato) VALUES ('Maria', 'Cal
 INSERT INTO persona (nombre, direccion, telefono, estrato) VALUES ('Luis', 'Calle 4', '1234567', 4);
 
 -- Insert Data in Concepto Table
-INSERT INTO concepto (id, nombre, valor, subsidio) VALUES ('', 'Agua', 10000, 0.5);
+INSERT INTO concepto (nombre, valor, subsidio) VALUES ('Agua', 10000, 0.5);
+INSERT INTO concepto (nombre, valor, subsidio) VALUES ('Alcantarillado', 20000, 0.5);
+INSERT INTO concepto (nombre, valor, subsidio) VALUES ('Multa', 30000, 0.5);
