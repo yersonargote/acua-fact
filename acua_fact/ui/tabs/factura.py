@@ -7,6 +7,18 @@ from acua_fact.server.schemas.persona import PersonaRead
 from acua_fact.ui.services.concepto import get_all_conceptos
 from acua_fact.ui.services.persona import get_all_personas
 
+HEADERS_FACTURA = [
+    "Identificación",
+    "Nombre",
+    "Dirección",
+    "Teléfono",
+    "Estrato",
+    "Fecha Inicio",
+    "Fecha Fin",
+    "Fecha Límite Pago",
+    "Total",
+]
+
 
 def get_personas(personas, nombres):
     if not personas and not nombres:
@@ -161,19 +173,7 @@ def factura_tab() -> gr.Tab:
                     value="## Factura",
                     show_label=False,
                 )
-                factura = gr.DataFrame(
-                    headers=[
-                        "Identificación",
-                        "Nombre",
-                        "Dirección",
-                        "Teléfono",
-                        "Estrato",
-                        "Fecha Inicio",
-                        "Fecha Fin",
-                        "Fecha Límite Pago",
-                        "Total",
-                    ]
-                )
+                factura = gr.DataFrame(headers=HEADERS_FACTURA)
         with gr.Row():
             with gr.Column():
                 gr.Markdown(
