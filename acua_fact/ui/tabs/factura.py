@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import date, datetime
 
 import gradio as gr
 
-from acua_fact.server.schemas.concepto import ConceptoRead
-from acua_fact.server.schemas.persona import PersonaRead
 from acua_fact.ui.services.concepto import get_all_conceptos
+from acua_fact.ui.services.concepto_factura import create_conceptos_factura
+from acua_fact.ui.services.factura import create_factura
 from acua_fact.ui.services.persona import get_all_personas
 
 HEADERS_FACTURA = [
@@ -22,8 +22,8 @@ HEADERS_FACTURA = [
 
 def get_personas(personas, nombres):
     if not personas and not nombres:
-        personas: list[PersonaRead] = get_all_personas()
-        nombres: list[str] = [persona.nombre for persona in personas]
+        personas = get_all_personas()
+        nombres = [persona.nombre for persona in personas]
     return gr.update(choices=nombres), personas, nombres
 
 
@@ -36,8 +36,8 @@ def get_persona(persona, personas):
 
 def get_conceptos(conceptos, c_nombres):
     if not conceptos and not c_nombres:
-        conceptos: list[ConceptoRead] = get_all_conceptos()
-        c_nombres: list[str] = [concepto.nombre for concepto in conceptos]
+        conceptos = get_all_conceptos()
+        c_nombres = [concepto.nombre for concepto in conceptos]
     return gr.update(choices=c_nombres), conceptos, c_nombres
 
 
@@ -48,6 +48,10 @@ def get_consumo(concepto, conceptos):
             if c.nombre == nombre:
                 total += c.valor
     return total
+
+
+def str_to_date(fecha: str) -> date:
+    return datetime.strptime(fecha, "%Y-%m-%d").date()
 
 
 def generar_factura(
@@ -62,7 +66,27 @@ def generar_factura(
     total,
     conceptos,
     conceptos_drop,
+    fatcura_titulo,
+    conceptos_factura_titulo,
 ):
+    fecha_inicio = str_to_date(periodo_inicio)
+    fecha_fin = str_to_date(periodo_fin)
+    fecha_limite_pago = str_to_date(limite_pago)
+
+    id_factura = create_factura(
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        fecha_limite_pago=fecha_limite_pago,
+        total=total,
+        persona_id=id_l,
+    )
+    if id_factura == -1:
+        return gr.update(), gr.update(), gr.update(), gr.update()
+    ids_conceptos = [c.id for c in conceptos]
+    created = create_conceptos_factura(id_factura, ids_conceptos)
+    if not created:
+        return gr.update(), gr.update(), gr.update(), gr.update()
+
     data_f = [
         [
             id_l,
@@ -82,12 +106,18 @@ def generar_factura(
         for c in conceptos:
             if c.nombre == nombre:
                 data_c.append([c.nombre, c.valor])
-    return gr.update(value=data_f), gr.update(value=data_c)
+
+    return (
+        gr.update(value=data_f),
+        gr.update(value=data_c),
+        gr.update(value=f"{fatcura_titulo} {id_factura}"),
+        gr.update(value=f"{conceptos_factura_titulo} {id_factura}"),
+    )
 
 
 def validar_fecha(fecha):
     try:
-        datetime.strptime(fecha, "%d/%m/%Y")
+        str_to_date(fecha)
         return gr.update(value="Formato de fecha válido")
     except ValueError:
         return gr.update(value="Formato de fecha inválido")
@@ -99,7 +129,7 @@ def factura_tab() -> gr.Tab:
     conceptos = gr.State([])
     c_nombres = gr.State([])
     with gr.Tab("Gestión Facturas") as tab:
-        with gr.Row():
+        with gr.Row(equal_height=True):
             with gr.Column():
                 gr.Markdown(value="## Buscar Persona", show_label=False)
                 personas_drop = gr.Dropdown(
@@ -118,16 +148,16 @@ def factura_tab() -> gr.Tab:
                     with gr.Column():
                         gr.Markdown(value="## Detalles Factura", show_label=False)
                         periodo_inicio = gr.Textbox(
-                            placeholder="10/01/2021",
+                            placeholder="2021-06-30",
                             label="Fecha Inicio",
                         )
 
                         periodo_fin = gr.Textbox(
-                            placeholder="10/02/2021",
+                            placeholder="2021-06-30",
                             label="Fecha Fin",
                         )
                         limite_pago = gr.Textbox(
-                            placeholder="10/03/2021",
+                            placeholder="2021-06-30",
                             label="Fecha Límite Pago",
                         )
                         validar_l = gr.Label(
@@ -165,22 +195,31 @@ def factura_tab() -> gr.Tab:
                         )
         with gr.Row():
             generar = gr.Button(value="Generar Factura", variant="primary")
-            gr.ClearButton(value="Limpiar", components=[personas_drop, conceptos_drop])
+            gr.ClearButton(
+                value="Limpiar",
+                components=[
+                    personas_drop,
+                    periodo_inicio,
+                    periodo_fin,
+                    limite_pago,
+                    validar_l,
+                ],
+            )
 
         with gr.Row():
             with gr.Column():
-                gr.Markdown(
-                    value="## Factura",
+                factura_titulo = gr.Label(
+                    value="Factura",
                     show_label=False,
                 )
-                factura = gr.DataFrame(headers=HEADERS_FACTURA)
+                factura_df = gr.DataFrame(headers=HEADERS_FACTURA)
         with gr.Row():
             with gr.Column():
-                gr.Markdown(
-                    value="## Conceptos Factura",
+                conceptos_factura_titulo = gr.Label(
+                    value="Conceptos Factura",
                     show_label=False,
                 )
-                factura_consumos = gr.DataFrame(
+                factura_consumos_df = gr.DataFrame(
                     headers=[
                         "Concepto",
                         "Valor",
@@ -225,8 +264,15 @@ def factura_tab() -> gr.Tab:
                 total,
                 conceptos,
                 conceptos_drop,
+                factura_titulo,
+                conceptos_factura_titulo,
             ],
-            outputs=[factura, factura_consumos],
+            outputs=[
+                factura_df,
+                factura_consumos_df,
+                factura_titulo,
+                conceptos_factura_titulo,
+            ],
         )
 
     return tab
