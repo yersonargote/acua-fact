@@ -4,13 +4,12 @@ from acua_fact.server.models.concepto_factura import ConceptoFacturaBase
 
 
 class ConceptoFacturaCreate(ConceptoFacturaBase):
-    id: int
     concepto_id: int
     factura_id: int
 
 
 class ConceptoFacturaRead(ConceptoFacturaCreate):
-    pass
+    id: int
 
 
 class ConceptoFacturaUpdate(BaseModel):

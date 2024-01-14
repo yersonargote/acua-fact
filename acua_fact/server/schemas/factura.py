@@ -6,12 +6,11 @@ from acua_fact.server.models.factura import FacturaBase
 
 
 class FacturaCreate(FacturaBase):
-    id: int
     persona_id: int
 
 
 class FacturaRead(FacturaCreate):
-    pass
+    id: int
 
 
 class FacturaUpdate(SQLModel):

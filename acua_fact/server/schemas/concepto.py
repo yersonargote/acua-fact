@@ -4,7 +4,7 @@ from acua_fact.server.models.concepto import ConceptoBase
 
 
 class ConceptoCreate(ConceptoBase):
-    id: int
+    pass
 
 
 class ConceptoRead(ConceptoBase):

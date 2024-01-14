@@ -5,7 +5,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from acua_fact.server.api import conceptos_router, personas_router
+from acua_fact.server.api import (
+    conceptos_factura_router,
+    conceptos_router,
+    facturas_router,
+    personas_router,
+)
 from acua_fact.server.db.session import create_db_and_tables
 
 origins = [
@@ -31,3 +36,5 @@ app.add_middleware(
 
 app.include_router(personas_router)
 app.include_router(conceptos_router)
+app.include_router(facturas_router)
+app.include_router(conceptos_factura_router)
