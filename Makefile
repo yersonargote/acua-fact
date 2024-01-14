@@ -14,6 +14,7 @@ dup:
 
 down:
 	docker-compose down
+	rm -rf ./acua_fact/ui/assets/*.pdf
 
 check:
 	make format
