@@ -5,6 +5,7 @@ import gradio as gr
 from acua_fact.ui.services.concepto import get_all_conceptos
 from acua_fact.ui.services.concepto_factura import create_conceptos_factura
 from acua_fact.ui.services.factura import create_factura
+from acua_fact.ui.services.pdf import generar_pdf
 from acua_fact.ui.services.persona import get_all_personas
 
 HEADERS_FACTURA = [
@@ -107,10 +108,26 @@ def generar_factura(
             if c.nombre == nombre:
                 data_c.append([c.nombre, c.valor])
 
+    title_factura = f"{fatcura_titulo} {id_factura}"
+    generar_pdf(
+        title=title_factura,
+        persona_id=id_l,
+        nombre=nombre_l,
+        direccion=direccion_l,
+        telefono=telefono_l,
+        estrato=estrato_l,
+        fecha_inicio=periodo_inicio,
+        fecha_fin=periodo_fin,
+        fecha_limite_pago=limite_pago,
+        factura_id=id_factura,
+        conceptos=conceptos,
+        total=total,
+    )
+
     return (
         gr.update(value=data_f),
         gr.update(value=data_c),
-        gr.update(value=f"{fatcura_titulo} {id_factura}"),
+        gr.update(value=title_factura),
         gr.update(value=f"{conceptos_factura_titulo} {id_factura}"),
     )
 
