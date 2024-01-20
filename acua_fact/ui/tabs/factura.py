@@ -22,10 +22,12 @@ HEADERS_FACTURA = [
 
 
 def get_personas(personas, nombres):
-    if not personas and not nombres:
-        personas = get_all_personas()
+    personas_response = get_all_personas()
+    if len(personas_response) != len(personas):
+        personas = personas_response
         nombres = [persona.nombre for persona in personas]
-    return gr.update(choices=nombres), personas, nombres
+        return gr.update(choices=nombres), personas, nombres
+    return gr.update(), personas, nombres
 
 
 def get_persona(persona, personas):
