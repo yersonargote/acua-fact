@@ -66,12 +66,10 @@ def generar_factura(
     total,
     conceptos,
     conceptos_drop,
-    fatcura_titulo,
-    conceptos_factura_titulo,
 ):
-    fecha_inicio = periodo_inicio
-    fecha_fin = periodo_fin
-    fecha_limite_pago = limite_pago
+    fecha_inicio = periodo_inicio.date()
+    fecha_fin = periodo_fin.date()
+    fecha_limite_pago = limite_pago.date()
 
     id_factura = create_factura(
         fecha_inicio=fecha_inicio,
@@ -94,9 +92,9 @@ def generar_factura(
             direccion_l,
             telefono_l,
             estrato_l,
-            periodo_inicio,
-            periodo_fin,
-            limite_pago,
+            fecha_inicio,
+            fecha_fin,
+            fecha_limite_pago,
             total,
         ]
     ]
@@ -107,17 +105,17 @@ def generar_factura(
             if c.nombre == nombre:
                 data_c.append([c.nombre, c.valor])
 
-    title_factura = f"{fatcura_titulo} {id_factura}"
+    factura_titulo = f"Factura {id_factura}"
     generar_pdf(
-        title=title_factura,
+        title=factura_titulo,
         persona_id=id_l,
         nombre=nombre_l,
         direccion=direccion_l,
         telefono=telefono_l,
         estrato=estrato_l,
-        fecha_inicio=periodo_inicio,
-        fecha_fin=periodo_fin,
-        fecha_limite_pago=limite_pago,
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        fecha_limite_pago=fecha_limite_pago,
         factura_id=id_factura,
         conceptos=conceptos,
         total=total,
@@ -126,8 +124,8 @@ def generar_factura(
     return (
         gr.update(value=data_f),
         gr.update(value=data_c),
-        gr.update(value=title_factura),
-        gr.update(value=f"{conceptos_factura_titulo} {id_factura}"),
+        gr.update(value=factura_titulo),
+        gr.update(value=f"Conceptos de la factura {id_factura}"),
     )
 
 
@@ -281,8 +279,6 @@ def factura_tab() -> gr.Tab:
                 total,
                 conceptos,
                 conceptos_drop,
-                factura_titulo,
-                conceptos_factura_titulo,
             ],
             outputs=[
                 factura_df,
