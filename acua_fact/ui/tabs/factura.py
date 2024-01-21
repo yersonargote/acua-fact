@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 import gradio as gr
 from gradio_calendar import Calendar
+from gradio_pdf import PDF
 
 from acua_fact.ui.services.concepto import get_all_conceptos
 from acua_fact.ui.services.concepto_factura import create_conceptos_factura
@@ -106,7 +107,7 @@ def generar_factura(
                 data_c.append([c.nombre, c.valor])
 
     factura_titulo = f"Factura {id_factura}"
-    generar_pdf(
+    pdf_path = generar_pdf(
         title=factura_titulo,
         persona_id=id_l,
         nombre=nombre_l,
@@ -126,6 +127,7 @@ def generar_factura(
         gr.update(value=data_c),
         gr.update(value=factura_titulo),
         gr.update(value=f"Conceptos de la factura {id_factura}"),
+        gr.update(value=pdf_path),
     )
 
 
@@ -218,6 +220,11 @@ def factura_tab() -> gr.Tab:
                         "Valor",
                     ]
                 )
+        with gr.Row():
+            with gr.Column():
+                pdf = PDF(
+                    label="PDF Factura",
+                )
 
         personas_drop.focus(
             fn=get_personas,
@@ -263,6 +270,7 @@ def factura_tab() -> gr.Tab:
                 factura_consumos_df,
                 factura_titulo,
                 conceptos_factura_titulo,
+                pdf,
             ],
         )
 

@@ -14,6 +14,7 @@ asyncpg = "^0.29.0"
 pandas = "^2.1.4"
 weasyprint = "^60.2"
 gradio-calendar = "^0.0.2"
+gradio-pdf = "^0.0.3"
 
 
 [build-system]

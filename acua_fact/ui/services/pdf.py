@@ -45,8 +45,10 @@ def generar_pdf(
         )
     )
     css = CSS(string=CSS_TEMPLATE, font_config=font_config)
+    pdf_path = f"acua_fact/ui/assets/factura{factura_id}.pdf"
     html.write_pdf(
-        f"acua_fact/ui/assets/factura{factura_id}.pdf",
+        pdf_path,
         stylesheets=[css],
         font_config=font_config,
     )
+    return pdf_path

@@ -869,6 +869,23 @@ typing-extensions = ">=4.0,<5.0"
 websockets = ">=10.0,<12.0"
 
 [[package]]
+name = "gradio-pdf"
+version = "0.0.3"
+description = "Python library for easily interacting with trained machine learning models"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "gradio_pdf-0.0.3-py3-none-any.whl", hash = "sha256:10b7f7e13a4e4fc30ee83ffebf1e1603230eb9cc8708706508fc598d9c7ddeda"},
+    {file = "gradio_pdf-0.0.3.tar.gz", hash = "sha256:97d6dc1ffea968474a93d43b1ccddaa7d308d508bbacf67fb9c0226c15043ca2"},
+]
+
+[package.dependencies]
+gradio = ">=4.0,<5.0"
+
+[package.extras]
+dev = ["build", "twine"]
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -2952,4 +2969,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d607a5791c749987c70e3dd2c213208a55da112fa89f70bf19ac2367ca62871c"
+content-hash = "1dcae3e028a60837e75455f6dd98a831c94a83be69813828a245ceb97fd3c46f"
