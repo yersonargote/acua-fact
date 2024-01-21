@@ -1,6 +1,7 @@
-from datetime import date, datetime
+from datetime import date
 
 import gradio as gr
+from gradio_calendar import Calendar
 
 from acua_fact.ui.services.concepto import get_all_conceptos
 from acua_fact.ui.services.concepto_factura import create_conceptos_factura
@@ -53,10 +54,6 @@ def get_consumo(concepto, conceptos):
     return total
 
 
-def str_to_date(fecha: str) -> date:
-    return datetime.strptime(fecha, "%Y-%m-%d").date()
-
-
 def generar_factura(
     id_l,
     nombre_l,
@@ -72,9 +69,9 @@ def generar_factura(
     fatcura_titulo,
     conceptos_factura_titulo,
 ):
-    fecha_inicio = str_to_date(periodo_inicio)
-    fecha_fin = str_to_date(periodo_fin)
-    fecha_limite_pago = str_to_date(limite_pago)
+    fecha_inicio = periodo_inicio
+    fecha_fin = periodo_fin
+    fecha_limite_pago = limite_pago
 
     id_factura = create_factura(
         fecha_inicio=fecha_inicio,
@@ -134,12 +131,14 @@ def generar_factura(
     )
 
 
-def validar_fecha(fecha):
-    try:
-        str_to_date(fecha)
-        return gr.update(value="Formato de fecha válido")
-    except ValueError:
-        return gr.update(value="Formato de fecha inválido")
+def validar_fechas(inicio: date, fin: date, limite: date):
+    if inicio > fin:
+        return "La fecha de inicio no puede ser mayor a la fecha fin"
+    if inicio > limite:
+        return "La fecha de inicio no puede ser mayor a la fecha límite de pago"
+    if fin > limite:
+        return "La fecha fin no puede ser mayor a la fecha límite de pago"
+    return "Las fechas son válidas"
 
 
 def factura_tab() -> gr.Tab:
@@ -166,38 +165,37 @@ def factura_tab() -> gr.Tab:
                 with gr.Row():
                     with gr.Column():
                         gr.Markdown(value="## Detalles Factura", show_label=False)
-                        periodo_inicio = gr.Textbox(
-                            placeholder="2021-06-30",
+                        periodo_inicio = Calendar(
                             label="Fecha Inicio",
+                            type="date",
                         )
 
-                        periodo_fin = gr.Textbox(
-                            placeholder="2021-06-30",
+                        periodo_fin = Calendar(
                             label="Fecha Fin",
+                            type="date",
                         )
-                        limite_pago = gr.Textbox(
-                            placeholder="2021-06-30",
+                        limite_pago = Calendar(
                             label="Fecha Límite Pago",
+                            type="date",
                         )
                         validar_l = gr.Label(
                             value="",
                             label="",
                             show_label=False,
                         )
-
-                    periodo_inicio.input(
-                        fn=validar_fecha,
-                        inputs=[periodo_inicio],
+                    periodo_inicio.change(
+                        fn=validar_fechas,
+                        inputs=[periodo_inicio, periodo_fin, limite_pago],
                         outputs=[validar_l],
                     )
-                    periodo_fin.input(
-                        fn=validar_fecha,
-                        inputs=[periodo_fin],
+                    periodo_fin.change(
+                        fn=validar_fechas,
+                        inputs=[periodo_inicio, periodo_fin, limite_pago],
                         outputs=[validar_l],
                     )
-                    limite_pago.input(
-                        fn=validar_fecha,
-                        inputs=[limite_pago],
+                    limite_pago.change(
+                        fn=validar_fechas,
+                        inputs=[periodo_inicio, periodo_fin, limite_pago],
                         outputs=[validar_l],
                     )
 
