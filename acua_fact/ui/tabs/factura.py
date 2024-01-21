@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime, timedelta
 
 import gradio as gr
 from gradio_calendar import Calendar
@@ -68,8 +68,8 @@ def generar_factura(
     conceptos_drop,
 ):
     fecha_inicio = periodo_inicio.date()
-    fecha_fin = periodo_fin.date()
-    fecha_limite_pago = limite_pago.date()
+    fecha_fin = datetime.strptime(periodo_fin, "%Y-%m-%d").date()
+    fecha_limite_pago = datetime.strptime(limite_pago, "%Y-%m-%d").date()
 
     id_factura = create_factura(
         fecha_inicio=fecha_inicio,
@@ -129,14 +129,14 @@ def generar_factura(
     )
 
 
-def validar_fechas(inicio: date, fin: date, limite: date):
-    if inicio > fin:
-        return "La fecha de inicio no puede ser mayor a la fecha fin"
-    if inicio > limite:
-        return "La fecha de inicio no puede ser mayor a la fecha límite de pago"
-    if fin > limite:
-        return "La fecha fin no puede ser mayor a la fecha límite de pago"
-    return "Las fechas son válidas"
+def validar_fechas(inicio: datetime):
+    if inicio:
+        fin = inicio + timedelta(days=30)
+        limite_pago = inicio + timedelta(days=45)
+        fin = fin.strftime("%Y-%m-%d")
+        limite_pago = limite_pago.strftime("%Y-%m-%d")
+        return gr.update(value=fin), gr.update(value=limite_pago)
+    return gr.update(), gr.update()
 
 
 def factura_tab() -> gr.Tab:
@@ -165,36 +165,16 @@ def factura_tab() -> gr.Tab:
                         gr.Markdown(value="## Detalles Factura", show_label=False)
                         periodo_inicio = Calendar(
                             label="Fecha Inicio",
-                            type="date",
+                            type="datetime",
                         )
 
-                        periodo_fin = Calendar(
-                            label="Fecha Fin",
-                            type="date",
-                        )
-                        limite_pago = Calendar(
-                            label="Fecha Límite Pago",
-                            type="date",
-                        )
-                        validar_l = gr.Label(
-                            value="",
-                            label="",
-                            show_label=False,
-                        )
+                        periodo_fin = gr.Label(label="Fecha Fin", value="")
+                        limite_pago = gr.Label(label="Fecha Límite Pago", value="")
+
                     periodo_inicio.change(
                         fn=validar_fechas,
-                        inputs=[periodo_inicio, periodo_fin, limite_pago],
-                        outputs=[validar_l],
-                    )
-                    periodo_fin.change(
-                        fn=validar_fechas,
-                        inputs=[periodo_inicio, periodo_fin, limite_pago],
-                        outputs=[validar_l],
-                    )
-                    limite_pago.change(
-                        fn=validar_fechas,
-                        inputs=[periodo_inicio, periodo_fin, limite_pago],
-                        outputs=[validar_l],
+                        inputs=[periodo_inicio],
+                        outputs=[periodo_fin, limite_pago],
                     )
 
                 with gr.Row():
@@ -214,10 +194,8 @@ def factura_tab() -> gr.Tab:
                 value="Limpiar",
                 components=[
                     personas_drop,
-                    periodo_inicio,
                     periodo_fin,
                     limite_pago,
-                    validar_l,
                 ],
             )
 
