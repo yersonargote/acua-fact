@@ -3,8 +3,7 @@
 ## TODO
 
 - [ ] Agregar la app a **docker-compose**.
-- [ ] Cambiar la forma de busqueda de personas por un **Dropdown**.
-
+- [ ] Agregar el **HOST** como variable de entorno.
 
 ## Descripción
 
@@ -24,6 +23,8 @@ Primero se debe asegurar que el contenedor de docker de **PostgreSQL** esté cor
 
 ```bash
 docker-compose up -d
+# o
+make dup
 ```
 
 Luego se debe correr el servidor de **FastAPI** y **Gradio**.
@@ -37,3 +38,13 @@ make run
 ## APP
 
 Abre [**http://localhost:8000/**](http://localhost:8000/) para ver la aplicaión gradio en el **navegador**.
+
+## STOP
+
+Parar **PostgreSQL**.
+
+```bash
+docker-compose down
+# o
+make down
+```
