@@ -14,6 +14,8 @@ dup:
 
 down:
 	docker-compose down
+
+clear:
 	rm -rf ./acua_fact/ui/assets/*.pdf
 
 check:
