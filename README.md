@@ -2,7 +2,7 @@
 
 ## Descripción
 
-ACUA FACT es una aplicación web que permite a los usuarios realizar facturas de manera sencilla y rápida, además de poder llevar un control de las mismas.
+**ACUA FACT** es una aplicación web que permite a los usuarios realizar facturas de manera sencilla y rápida, además de poder llevar un control de las mismas.
 
 ## Instalación
 
@@ -22,7 +22,7 @@ poetry run uvicorn acua_fact.main:app --reload
 make run
 ```
 
-[!WARNING]: Si desea usar **PostgreSQL** debe cambiar la `DATABASE_URL` en el archivo `.env`, ver el archivo `.env.example` para más información.
+> [!WARNING]: Si desea usar **PostgreSQL** debe cambiar la `DATABASE_URL` en el archivo `.env`, ver el archivo `.env.example` para más información.
 
 Correr el contenedor de docker de **PostgreSQL** esté corriendo.
 
@@ -40,7 +40,7 @@ Abre [**http://localhost:8000/**](http://localhost:8000/) para ver la aplicaión
 
 Haz **Ctrl + C** para parar el servidor de **FastAPI** y **Gradio**.
 
-[!NOTE]
+> [!NOTE]
 Para parar **PostgreSQL**.
 
 ```bash
