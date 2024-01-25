@@ -228,7 +228,7 @@ def factura_tab() -> gr.Tab:
 
         personas_drop.focus(
             fn=get_personas,
-            inputs=[personas],
+            inputs=[personas, p_nombres],
             outputs=[personas_drop, personas, p_nombres],
         )
 
