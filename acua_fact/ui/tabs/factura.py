@@ -240,7 +240,7 @@ def factura_tab() -> gr.Tab:
 
         conceptos_drop.focus(
             fn=get_conceptos,
-            inputs=[conceptos],
+            inputs=[conceptos, c_nombres],
             outputs=[conceptos_drop, conceptos, c_nombres],
         )
 

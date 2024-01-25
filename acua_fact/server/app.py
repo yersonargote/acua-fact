@@ -11,11 +11,10 @@ from acua_fact.server.api import (
     facturas_router,
     personas_router,
 )
+from acua_fact.server.core.config import settings
 from acua_fact.server.db.session import create_db_and_tables
 
-origins = [
-    "http://localhost:8000",
-]
+origins = settings.origins
 
 
 @asynccontextmanager
