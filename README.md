@@ -22,7 +22,7 @@ poetry run uvicorn acua_fact.main:app --reload
 make run
 ```
 
-> [!WARNING]: Si desea usar **PostgreSQL** debe cambiar la `DATABASE_URL` en el archivo `.env`, ver el archivo `.env.example` para más información.
+> [!WARNING] Si desea usar **PostgreSQL** debe cambiar la `DATABASE_URL` en el archivo `.env`, ver el archivo `.env.example` para más información.
 
 Correr el contenedor de docker de **PostgreSQL** esté corriendo.
 
