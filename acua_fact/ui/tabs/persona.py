@@ -8,7 +8,7 @@ from acua_fact.ui.services.persona import (
 )
 
 
-def persona_tab():
+def persona_tab() -> gr.Tab:
     with gr.Tab("Gestión Personas") as tab:
         gr.Markdown(value="## Buscar Persona", show_label=False)
         with gr.Row():

@@ -9,6 +9,7 @@ from acua_fact.server.api import (
     conceptos_factura_router,
     conceptos_router,
     facturas_router,
+    pagos_router,
     personas_router,
 )
 from acua_fact.server.core.config import settings
@@ -37,3 +38,4 @@ app.include_router(personas_router)
 app.include_router(conceptos_router)
 app.include_router(facturas_router)
 app.include_router(conceptos_factura_router)
+app.include_router(pagos_router)

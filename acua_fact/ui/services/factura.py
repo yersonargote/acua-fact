@@ -22,9 +22,16 @@ def create_factura(
         total=total,
         persona_id=persona_id,
     )
-    print(factura.model_dump_json())
     response = requests.post(url, data=factura.model_dump_json())
     if response.status_code == 201:
         return response.json()["id"]
 
     return -1
+
+
+def get_factura(id: int):
+    url = f"{URL}/{id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    return None

@@ -5,8 +5,8 @@ from sqlmodel import Field, Relationship, SQLModel
 
 class PagoBase(SQLModel):
     fecha: date
-    total: float
-    factura_id: int = Field(foreign_key="factura.id")
+    valor: float
+    id_factura: int = Field(foreign_key="factura.id")
 
 
 class Pago(PagoBase, table=True):

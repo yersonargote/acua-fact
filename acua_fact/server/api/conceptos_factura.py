@@ -12,7 +12,7 @@ from acua_fact.server.schemas.concepto_factura import (
 
 router = APIRouter(
     prefix="/conceptos_factura",
-    tags=["conceptos_factura"],
+    tags=["conceptos factura"],
 )
 
 
